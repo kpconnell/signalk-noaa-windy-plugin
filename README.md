@@ -70,7 +70,7 @@ The plugin uses these hardcoded defaults for optimal performance:
 ### Web Interface
 
 Access the plugin's web interface at:
-`http://your-signalk-server:3000/plugins/noaa-vos-signalk-plugin/`
+`http://your-signalk-server:3000/plugins/signalk-noaa-weather-report/`
 
 The interface provides:
 - Plugin status indicator
@@ -80,7 +80,7 @@ The interface provides:
 
 ### API Endpoints
 
-#### GET `/plugins/noaa-vos-signalk-plugin/status`
+#### GET `/plugins/signalk-noaa-weather-report/status`
 Returns plugin status and last report data.
 
 **Response:**
@@ -103,7 +103,7 @@ Returns plugin status and last report data.
 }
 ```
 
-#### POST `/plugins/noaa-vos-signalk-plugin/generate-report`
+#### POST `/plugins/signalk-noaa-weather-report/generate-report`
 Manually generate a new weather report.
 
 **Response:**

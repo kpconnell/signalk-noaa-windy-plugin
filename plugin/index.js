@@ -11,7 +11,7 @@ module.exports = function(app) {
     let pluginStarted = false;
 
     const plugin = {
-        id: 'noaa-vos-signalk-plugin',
+        id: 'signalk-noaa-weather-report',
         name: 'NOAA / Windy Ship Reporting Plugin',
         description: 'Collects marine weather data from SignalK and generates BBXX weather reports for NOAA and Windy',
 
@@ -137,6 +137,42 @@ module.exports = function(app) {
             logger.info(`Test Mode: ${options.testMode ? 'ON (reports logged only)' : 'OFF (reports sent to NOAA)'}`);
 
             pluginStarted = true;
+
+            // Handle automatic reporting if interval is set
+            if (options.reportInterval && options.reportInterval > 0) {
+                logger.info(`Automatic reporting enabled - interval: ${options.reportInterval} hours`);
+                
+                // Send initial report after 2 minutes
+                setTimeout(async () => {
+                    if (pluginStarted) {
+                        logger.info('Sending initial weather report (2 minutes after startup)...');
+                        try {
+                            await generateReport(options);
+                            logger.info('Initial weather report sent successfully');
+                        } catch (error) {
+                            logger.error(`Failed to send initial weather report: ${error.message}`);
+                        }
+                    }
+                }, 2 * 60 * 1000); // 2 minutes
+
+                // Set up recurring reports
+                const intervalMs = options.reportInterval * 60 * 60 * 1000; // Convert hours to milliseconds
+                intervalId = setInterval(async () => {
+                    if (pluginStarted) {
+                        logger.info(`Sending scheduled weather report (every ${options.reportInterval} hours)...`);
+                        try {
+                            await generateReport(options);
+                            logger.info('Scheduled weather report sent successfully');
+                        } catch (error) {
+                            logger.error(`Failed to send scheduled weather report: ${error.message}`);
+                        }
+                    }
+                }, intervalMs);
+                
+                logger.info(`Next scheduled report in ${options.reportInterval} hours`);
+            } else {
+                logger.info('Automatic reporting disabled - manual reports only');
+            }
 
             logger.info('NOAA / Windy Ship Reporting Plugin started successfully');
         },
