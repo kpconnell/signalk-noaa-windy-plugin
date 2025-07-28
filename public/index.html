@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NOAA / Windy Ship Reporting Plugin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
+            background-color: #27ae60;
+        }
+        .status-inactive {
+            background-color: #e74c3c;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .info-item {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .info-value {
+            color: #34495e;
+            margin-top: 5px;
+        }
+        .bbxx-report {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        .human-readable {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            white-space: pre-line;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .loading {
+            display: none;
+            color: #3498db;
+            font-style: italic;
+        }
+        .error {
+            color: #e74c3c;
+            background-color: #fadbd8;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #27ae60;
+            background-color: #d5f4e6;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+            <h1>🌊 NOAA / Windy Ship Reporting Plugin</h1>
+    
+    <div class="container">
+        <h2>Plugin Status</h2>
+        <div id="plugin-status">
+            <span class="status-indicator" id="status-indicator"></span>
+            <span id="status-text">Loading...</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Actions</h2>
+        <button id="refresh-btn" onclick="refreshStatus()">🔄 Refresh Status</button>
+        <button id="generate-btn" onclick="generateReport()">📊 Generate Report</button>
+        <div id="loading" class="loading">Generating report...</div>
+        <div id="message"></div>
+    </div>
+
+    <div class="container" id="last-report" style="display: none;">
+        <h2>Last Report</h2>
+        <div class="timestamp" id="report-timestamp"></div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Position</div>
+                <div class="info-value" id="position"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">True Wind Direction</div>
+                <div class="info-value" id="wind-direction"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">True Wind Speed</div>
+                <div class="info-value" id="wind-speed"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Report Generated</div>
+                <div class="info-value" id="report-time"></div>
+            </div>
+        </div>
+
+        <h3>Human Readable Report</h3>
+        <div class="human-readable" id="human-readable"></div>
+
+        <h3>BBXX Report</h3>
+        <div class="bbxx-report" id="bbxx-report"></div>
+    </div>
+
+    <script>
+        let statusData = null;
+
+        async function refreshStatus() {
+            try {
+                const response = await fetch('/plugins/wx-nmea-signalk-plugin/status');
+                statusData = await response.json();
+                updateStatusDisplay();
+            } catch (error) {
+                console.error('Error fetching status:', error);
+                showMessage('Error fetching plugin status', 'error');
+            }
+        }
+
+        function updateStatusDisplay() {
+            const statusIndicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            const lastReportDiv = document.getElementById('last-report');
+            const generateBtn = document.getElementById('generate-btn');
+
+            if (statusData.pluginStarted) {
+                statusIndicator.className = 'status-indicator status-active';
+                statusText.textContent = 'Plugin Active';
+                generateBtn.disabled = false;
+            } else {
+                statusIndicator.className = 'status-indicator status-inactive';
+                statusText.textContent = 'Plugin Inactive';
+                generateBtn.disabled = true;
+            }
+
+            if (statusData.lastReport) {
+                lastReportDiv.style.display = 'block';
+                updateLastReportDisplay(statusData.lastReport);
+            } else {
+                lastReportDiv.style.display = 'none';
+            }
+        }
+
+        function updateLastReportDisplay(report) {
+            document.getElementById('report-timestamp').textContent = 
+                `Generated: ${new Date(report.timestamp).toLocaleString()}`;
+            
+            document.getElementById('position').textContent = 
+                `${report.position.lat.toFixed(6)}, ${report.position.lon.toFixed(6)}`;
+            
+            document.getElementById('wind-direction').textContent = 
+                `${report.trueWind.direction.toFixed(1)}°`;
+            
+            document.getElementById('wind-speed').textContent = 
+                `${report.trueWind.speed.toFixed(2)} knots`;
+            
+            document.getElementById('report-time').textContent = 
+                new Date(report.timestamp).toLocaleTimeString();
+            
+            document.getElementById('human-readable').textContent = report.humanReadable;
+            document.getElementById('bbxx-report').textContent = report.bbxx;
+        }
+
+        async function generateReport() {
+            const generateBtn = document.getElementById('generate-btn');
+            const loading = document.getElementById('loading');
+            const messageDiv = document.getElementById('message');
+
+            generateBtn.disabled = true;
+            loading.style.display = 'block';
+            messageDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/plugins/wx-nmea-signalk-plugin/generate-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.report) {
+                    showMessage('Report generated successfully!', 'success');
+                    // Update the display with the new report
+                    statusData.lastReport = result.report;
+                    updateLastReportDisplay(result.report);
+                    document.getElementById('last-report').style.display = 'block';
+                } else {
+                    showMessage('Failed to generate report', 'error');
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+                showMessage('Error generating report: ' + error.message, 'error');
+            } finally {
+                generateBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${text}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStatus();
+            // Auto-refresh every 30 seconds
+            setInterval(refreshStatus, 30000);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,46 @@
+{
+  "name": "wx-nmea-signalk-plugin",
+  "version": "1.0.0",
+  "description": "SignalK plugin for generating BBXX weather reports from marine data",
+  "main": "plugin/index.js",
+  "scripts": {
+    "build": "cp -r src/* plugin/",
+    "dev": "npm run build && npm link",
+    "test": "node test.js",
+    "deploy": "./deploy_to_pi.sh"
+  },
+  "keywords": [
+    "signalk-node-server-plugin",
+    "signalk-category-weather",
+    "weather",
+    "bbxx",
+    "marine"
+  ],
+  "author": {
+    "name": "Kevin Connell",
+    "email": "kevin@connells.net"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevincconnell/wx-nmea-signalk-plugin.git"
+  },
+  "homepage": "https://github.com/kevincconnell/wx-nmea-signalk-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/kevincconnell/wx-nmea-signalk-plugin/issues"
+  },
+  "type": "commonjs",
+  "signalk-plugin-enabled-by-default": false,
+  "signalk": {
+    "appIcon": "weather",
+    "displayName": "NOAA / Windy Ship Reporting Plugin"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
