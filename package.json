@@ -23,11 +23,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kevincconnell/wx-nmea-signalk-plugin.git"
+    "url": "https://github.com/kpconnell/signalk-noaa-windy-plugin.git"
   },
-  "homepage": "https://github.com/kevincconnell/wx-nmea-signalk-plugin#readme",
+  "homepage": "https://github.com/kpconnell/signalk-noaa-windy-plugin#readme",
   "bugs": {
-    "url": "https://github.com/kevincconnell/wx-nmea-signalk-plugin/issues"
+    "url": "https://github.com/kpconnell/signalk-noaa-windy-plugin/issues"
   },
   "type": "commonjs",
   "signalk-plugin-enabled-by-default": false,
