@@ -99,6 +99,20 @@ module.exports = function(app) {
             }
         },
 
+        statusMessage: function() {
+            if (!pluginStarted) {
+                return 'Plugin not started';
+            }
+            
+            if (lastReport) {
+                const timestamp = lastReport.utc_time.toISOString().slice(0, 19).replace('T', ' ');
+                const tws = lastReport.true_wind_speed ? `${lastReport.true_wind_speed.toFixed(1)} knots` : 'N/A';
+                return `Last report: ${timestamp}, TWS: ${tws}`;
+            }
+            
+            return 'No reports sent yet';
+        },
+
         start: function(options) {
             if (pluginStarted) {
                 return;
