@@ -55,10 +55,9 @@ if ! git rev-parse --git-dir > /dev/null 2>&1; then
     exit 1
 fi
 
-# Check if there are uncommitted changes
+# Check if there are uncommitted changes (but we'll handle them automatically)
 if ! git diff-index --quiet HEAD --; then
-    print_warning "You have uncommitted changes. Please commit or stash them first."
-    exit 1
+    print_status "Found uncommitted changes. Will add and commit them automatically."
 fi
 
 # Build the plugin
