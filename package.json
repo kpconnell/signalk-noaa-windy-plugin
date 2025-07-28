@@ -1,5 +1,5 @@
 {
-  "name": "wx-nmea-signalk-plugin",
+  "name": "signalk-noaa-weather-report",
   "version": "1.0.0",
   "description": "SignalK plugin for generating BBXX weather reports from marine data",
   "main": "plugin/index.js",
