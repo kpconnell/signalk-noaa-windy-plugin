@@ -97,7 +97,7 @@ Returns plugin status and last report data.
       "direction": 270.5,
       "speed": 15.2
     },
-    "bbxx": "BBXX WXH9553 15144 99281 71127 43/// /2715 1//// 2//// 4//// 5//// 7//// 8//// 222// 04225 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=",
+    "bbxx": "BBXX 9RM2K7C 15144 99281 71127 43/// /2715 1//// 2//// 4//// 5//// 7//// 8//// 222// 04225 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=",
     "humanReadable": "UTC: 2024-01-15 14:30\n  Position: 28.144000, -112.742000\n           28°08.640'N, 112°44.520'W\n  True Wind: 270.5° 15.20 knots"
   }
 }
@@ -155,12 +155,12 @@ The plugin collects the following data from SignalK:
 The plugin generates BBXX format weather reports following WMO standards for marine weather observations. For complete details on the BBXX format, see the [NOAA VOS Observing Handbook](https://www.vos.noaa.gov/ObsHB-508/ObservingHandbook1_2010_508_compliant.pdf).
 
 ```
-BBXX WXH9553 15144 99281 71127 43/// /2715 1//// 2//// 4//// 5//// 7//// 8//// 222// 04225 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=
+BBXX 9RM2K7C 15144 99281 71127 43/// /2715 1//// 2//// 4//// 5//// 7//// 8//// 222// 04225 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=
 ```
 
 ### BBXX Format Breakdown
 - **BBXX**: Report type identifier
-- **WXH9553**: Station identifier
+- **9RM2K7C**: Station identifier
 - **15144**: Day (15) + Hour (14) + Wind indicator (4)
 - **99281**: Latitude code (99 + 281 tenths)
 - **71127**: Quadrant (7) + Longitude (1127 tenths)
@@ -188,7 +188,7 @@ To participate in the VOS program, you must obtain a valid Ship's Station Callsi
 **United States vessels:**
 - Register with the FCC (Federal Communications Commission)
 - Apply for a Ship Station License
-- You will receive a unique callsign (e.g., WXH9553)
+- You will receive a unique callsign (e.g., 9RM2K7C)
 
 **International vessels:**
 - Register with your national telecommunications authority

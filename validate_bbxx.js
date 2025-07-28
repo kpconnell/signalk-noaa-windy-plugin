@@ -228,6 +228,6 @@ function validateAndDecodeBbxx(bbxxMessage) {
 }
 
 // Test with the provided BBXX message
-const testMessage = "BBXX WXH9553 28154 99112 70742 43/// /0112 1//// 2//// 4//// 5//// 7//// 8//// 222// 04275 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=";
+const testMessage = "BBXX 9RM2K7C 28154 99112 70742 43/// /0112 1//// 2//// 4//// 5//// 7//// 8//// 222// 04275 0//// 2//// 3//// 4//// 5//// 6//// 8//// ICE /////=";
 
 validateAndDecodeBbxx(testMessage); 

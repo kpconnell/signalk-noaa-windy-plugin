@@ -22,7 +22,7 @@ function getBbxxQuadrant(lat, lon) {
     }
 }
 
-function generateBbxxReport(trueWindDirection, trueWindSpeed, lat, lon, utcTime, stationId = "WXH9553", waterTemp = null) {
+function generateBbxxReport(trueWindDirection, trueWindSpeed, lat, lon, utcTime, stationId = "9RM2K7C", waterTemp = null) {
     /**
      * Generate a BBXX weather report from true wind direction, speed, position, and UTC time.
      * Args:
@@ -31,7 +31,7 @@ function generateBbxxReport(trueWindDirection, trueWindSpeed, lat, lon, utcTime,
      *   lat (number): Latitude in decimal degrees
      *   lon (number): Longitude in decimal degrees
      *   utcTime (Date): UTC datetime for the report
-     *   stationId (string): Station identifier (default: WXH9553)
+     *   stationId (string): Station identifier (default: 9RM2K7C)
      *   waterTemp (number): Water temperature in Celsius (default: null)
      * Returns:
      *   string: BBXX weather report

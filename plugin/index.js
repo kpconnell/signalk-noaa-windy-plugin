@@ -75,7 +75,7 @@ module.exports = function(app) {
         uiSchema: {
             stationId: {
                 'ui:widget': 'text',
-                'ui:placeholder': 'Enter your ship station callsign (e.g., WXH9553)'
+                'ui:placeholder': 'Enter your ship station callsign (e.g., 9RM2K7C)'
             },
             betaKey: {
                 'ui:widget': 'password',

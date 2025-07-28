@@ -10,7 +10,7 @@ const testData = {
     lat: 28.144,
     lon: -112.742,
     utcTime: new Date('2024-01-15T14:30:00Z'),
-    stationId: 'WXH9553',
+    stationId: '9RM2K7C',
     waterTemp: 22.5
 };
 
