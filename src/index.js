@@ -143,15 +143,19 @@ module.exports = function(app) {
                 logger.info(`Automatic reporting enabled - interval: ${options.reportInterval} hours`);
                 
                 // Send initial report after 2 minutes
+                logger.info('Setting up initial report timer (2 minutes)...');
                 setTimeout(async () => {
+                    logger.info('Initial report timer fired - checking plugin state...');
                     if (pluginStarted) {
-                        logger.info('Sending initial weather report (2 minutes after startup)...');
+                        logger.info('Plugin is still running - sending initial weather report...');
                         try {
                             await generateReport(options);
                             logger.info('Initial weather report sent successfully');
                         } catch (error) {
                             logger.error(`Failed to send initial weather report: ${error.message}`);
                         }
+                    } else {
+                        logger.warn('Plugin is no longer running - skipping initial report');
                     }
                 }, 2 * 60 * 1000); // 2 minutes
 
@@ -204,8 +208,18 @@ module.exports = function(app) {
         registerWithRouter: function(router) {
             // Status endpoint
             router.get('/status', (req, res) => {
+                const status = pluginStatus;
+                let detailedStatus = status;
+                
+                if (lastReport) {
+                    const timestamp = lastReport.utc_time.toISOString().slice(0, 19).replace('T', ' ');
+                    const tws = lastReport.true_wind_speed ? `${lastReport.true_wind_speed.toFixed(1)} knots` : 'N/A';
+                    detailedStatus = `${status} - Last report sent: ${timestamp}, TWS average: ${tws}`;
+                }
+                
                 res.json({
                     pluginStarted,
+                    status: detailedStatus,
                     lastReport: lastReport ? {
                         timestamp: lastReport.utc_time,
                         position: {
