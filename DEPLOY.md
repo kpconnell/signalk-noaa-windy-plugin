@@ -23,7 +23,7 @@ PI_USER="kevin"                 # SSH user on the Pi
 PI_HOST="raspberrypi.local"     # Pi hostname or IP address
 SIGNALK_USER="signalk"          # SignalK service user
 SIGNALK_PORT="80"               # SignalK web interface port
-PLUGIN_NAME="wx-nmea-signalk-plugin"
+PLUGIN_NAME="noaa-vos-signalk-plugin"
 ```
 
 ### Common Configuration Changes
@@ -80,7 +80,7 @@ SIGNALK_USER="pi"  # If SignalK runs under pi user
 
 ### Access the Plugin Interface
 
-Visit: `http://raspberrypi.local:80/plugins/wx-nmea-signalk-plugin/`
+Visit: `http://raspberrypi.local:80/plugins/noaa-vos-signalk-plugin/`
 
 ### Configuration Options
 
@@ -117,7 +117,7 @@ Visit: `http://raspberrypi.local:80/plugins/wx-nmea-signalk-plugin/`
 **Plugin not appearing in SignalK**
 - Restart SignalK server: `sudo systemctl restart signalk`
 - Check SignalK logs: `sudo journalctl -u signalk -f`
-- Verify plugin files: `ls -la ~/.signalk/node_modules/wx-nmea-signalk-plugin/`
+- Verify plugin files: `ls -la ~/.signalk/node_modules/noaa-vos-signalk-plugin/`
 
 **Plugin tests failing**
 - Check if all dependencies installed correctly
@@ -129,8 +129,8 @@ Visit: `http://raspberrypi.local:80/plugins/wx-nmea-signalk-plugin/`
 **"Permission denied" errors**
 - The script sets correct permissions, but if issues persist:
 ```bash
-sudo chown -R signalk:signalk ~/.signalk/node_modules/wx-nmea-signalk-plugin/
-sudo chmod -R 755 ~/.signalk/node_modules/wx-nmea-signalk-plugin/
+sudo chown -R signalk:signalk ~/.signalk/node_modules/noaa-vos-signalk-plugin/
+sudo chmod -R 755 ~/.signalk/node_modules/noaa-vos-signalk-plugin/
 ```
 
 ## Manual Deployment
@@ -139,19 +139,19 @@ If the script fails, you can deploy manually:
 
 1. **Copy files to Pi:**
    ```bash
-   scp -r wx-nmea-signalk-plugin/ raspberrypi.local:~/
+   scp -r noaa-vos-signalk-plugin/ raspberrypi.local:~/
    ```
 
 2. **SSH to Pi and move files:**
    ```bash
    ssh raspberrypi.local
-   sudo mv wx-nmea-signalk-plugin ~/.signalk/node_modules/
-   sudo chown -R signalk:signalk ~/.signalk/node_modules/wx-nmea-signalk-plugin/
+   sudo mv noaa-vos-signalk-plugin ~/.signalk/node_modules/
+sudo chown -R signalk:signalk ~/.signalk/node_modules/noaa-vos-signalk-plugin/
    ```
 
 3. **Install dependencies:**
    ```bash
-   cd ~/.signalk/node_modules/wx-nmea-signalk-plugin/
+   cd ~/.signalk/node_modules/noaa-vos-signalk-plugin/
    sudo -u signalk npm install --production
    ```
 
@@ -172,10 +172,10 @@ ssh raspberrypi.local 'sudo systemctl status signalk'
 ssh raspberrypi.local 'sudo journalctl -u signalk -f'
 
 # Check plugin files
-ssh raspberrypi.local 'ls -la ~/.signalk/node_modules/wx-nmea-signalk-plugin/'
+ssh raspberrypi.local 'ls -la ~/.signalk/node_modules/noaa-vos-signalk-plugin/'
 
 # Test plugin on Pi
-ssh raspberrypi.local 'cd ~/.signalk/node_modules/wx-nmea-signalk-plugin/ && npm test'
+ssh raspberrypi.local 'cd ~/.signalk/node_modules/noaa-vos-signalk-plugin/ && npm test'
 
 # Restart SignalK
 ssh raspberrypi.local 'sudo systemctl restart signalk'

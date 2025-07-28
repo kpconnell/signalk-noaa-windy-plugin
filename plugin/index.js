@@ -11,7 +11,7 @@ module.exports = function(app) {
     let pluginStarted = false;
 
     const plugin = {
-        id: 'wx-nmea-signalk-plugin',
+        id: 'noaa-vos-signalk-plugin',
         name: 'NOAA / Windy Ship Reporting Plugin',
         description: 'Collects marine weather data from SignalK and generates BBXX weather reports for NOAA and Windy',
 
@@ -111,19 +111,19 @@ module.exports = function(app) {
                     format: winston.format.combine(
                         winston.format.timestamp(),
                         winston.format.printf(({ timestamp, level, message }) => {
-                            return `${timestamp} [wx-nmea] ${level}: ${message}`;
+                            return `${timestamp} [noaa-vos] ${level}: ${message}`;
                         })
                     )
                 }),
                 new DailyRotateFile({
-                    filename: 'logs/wx-nmea-%DATE%.log',
+                    filename: 'logs/noaa-vos-%DATE%.log',
                     datePattern: 'YYYY-MM-DD',
                     maxFiles: '7d',
                     level: 'info',
                     format: winston.format.combine(
                         winston.format.timestamp(),
                         winston.format.printf(({ timestamp, level, message }) => {
-                            return `${timestamp} [wx-nmea] ${level}: ${message}`;
+                            return `${timestamp} [noaa-vos] ${level}: ${message}`;
                         })
                     )
                 })

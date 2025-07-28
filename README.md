@@ -19,8 +19,8 @@ A SignalK plugin that collects marine weather data and generates BBXX weather re
 1. Clone or download the plugin to your SignalK server's node_modules directory:
    ```bash
    cd ~/.signalk/node_modules
-   git clone <repository-url> wx-nmea-signalk-plugin
-   cd wx-nmea-signalk-plugin
+   git clone <repository-url> noaa-vos-signalk-plugin
+cd noaa-vos-signalk-plugin
    ```
 
 2. Install dependencies:
@@ -44,7 +44,7 @@ A SignalK plugin that collects marine weather data and generates BBXX weather re
 
 Install directly through the SignalK App Store or via npm:
 ```bash
-npm install wx-nmea-signalk-plugin
+npm install signalk-noaa-weather-report
 ```
 
 ## Configuration
@@ -70,7 +70,7 @@ The plugin uses these hardcoded defaults for optimal performance:
 ### Web Interface
 
 Access the plugin's web interface at:
-`http://your-signalk-server:3000/plugins/wx-nmea-signalk-plugin/`
+`http://your-signalk-server:3000/plugins/noaa-vos-signalk-plugin/`
 
 The interface provides:
 - Plugin status indicator
@@ -80,7 +80,7 @@ The interface provides:
 
 ### API Endpoints
 
-#### GET `/plugins/wx-nmea-signalk-plugin/status`
+#### GET `/plugins/noaa-vos-signalk-plugin/status`
 Returns plugin status and last report data.
 
 **Response:**
@@ -103,7 +103,7 @@ Returns plugin status and last report data.
 }
 ```
 
-#### POST `/plugins/wx-nmea-signalk-plugin/generate-report`
+#### POST `/plugins/noaa-vos-signalk-plugin/generate-report`
 Manually generate a new weather report.
 
 **Response:**
@@ -202,7 +202,7 @@ When test mode is enabled (default), BBXX data is logged but not actually submit
 
 The plugin uses Winston for comprehensive logging with:
 - Console output for real-time monitoring
-- Daily rotating log files in `logs/wx-nmea-YYYY-MM-DD.log`
+- Daily rotating log files in `logs/noaa-vos-YYYY-MM-DD.log`
 - Configurable log levels (error, warn, info, debug)
 - 7-day log retention
 

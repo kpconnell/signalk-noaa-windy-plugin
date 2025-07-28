@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # SignalK Plugin Deployment Script for Raspberry Pi
-# This script deploys the wx-nmea-signalk-plugin to a Raspberry Pi running SignalK
+# This script deploys the noaa-vos-signalk-plugin to a Raspberry Pi running SignalK
 
 # Configuration
 PI_USER="kevin"
 PI_HOST="raspberrypi.local"
 SIGNALK_USER="kevin"
 SIGNALK_PORT="80"
-PLUGIN_NAME="wx-nmea-signalk-plugin"
+PLUGIN_NAME="noaa-vos-signalk-plugin"
 
 # Colors for output
 RED='\033[0;31m'
@@ -36,7 +36,7 @@ print_error() {
 
 # Check if we're in the plugin directory
 if [ ! -f "package.json" ] || [ ! -d "src" ] || [ ! -d "plugin" ]; then
-    print_error "Must be run from the wx-nmea-signalk-plugin directory"
+    print_error "Must be run from the noaa-vos-signalk-plugin directory"
     exit 1
 fi
 

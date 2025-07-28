@@ -176,7 +176,7 @@
 
         async function refreshStatus() {
             try {
-                const response = await fetch('/plugins/wx-nmea-signalk-plugin/status');
+                const response = await fetch('/plugins/noaa-vos-signalk-plugin/status');
                 statusData = await response.json();
                 updateStatusDisplay();
             } catch (error) {
@@ -239,7 +239,7 @@
             messageDiv.innerHTML = '';
 
             try {
-                const response = await fetch('/plugins/wx-nmea-signalk-plugin/generate-report', {
+                const response = await fetch('/plugins/noaa-vos-signalk-plugin/generate-report', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
