@@ -1,13 +1,16 @@
 {
   "name": "signalk-noaa-weather-report",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SignalK plugin for generating BBXX weather reports from marine data",
   "main": "plugin/index.js",
   "scripts": {
     "build": "cp -r src/* plugin/",
     "dev": "npm run build && npm link",
     "test": "node test.js",
-    "deploy": "./deploy_to_pi.sh"
+    "deploy": "./deploy_to_pi.sh",
+    "release:patch": "npm version patch && git push && git push --tags && npm publish",
+    "release:minor": "npm version minor && git push && git push --tags && npm publish",
+    "release:major": "npm version major && git push && git push --tags && npm publish"
   },
   "keywords": [
     "signalk-node-server-plugin",
