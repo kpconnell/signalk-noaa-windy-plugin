@@ -1,6 +1,6 @@
 # Raspberry Pi Deployment Guide
 
-This guide explains how to deploy the WX NMEA SignalK plugin to a Raspberry Pi running SignalK server.
+This guide explains how to deploy the SignalK VOS NOAA Weather Report plugin to a Raspberry Pi running SignalK server.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ This guide explains how to deploy the WX NMEA SignalK plugin to a Raspberry Pi r
 Before running the deployment script, you may need to modify the configuration variables at the top of `deploy_to_pi.sh`:
 
 ```bash
-PI_USER="kevin"                 # SSH user on the Pi
+PI_USER="piuser"                 # SSH user on the Pi
 PI_HOST="raspberrypi.local"     # Pi hostname or IP address
 SIGNALK_USER="signalk"          # SignalK service user
 SIGNALK_PORT="80"               # SignalK web interface port

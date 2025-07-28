@@ -1,6 +1,6 @@
-# WX NMEA SignalK Plugin
+# Signal K NOAA Voluntary Ship Weather Observation Plugin
 
-A SignalK plugin that collects marine weather data and generates BBXX weather reports for submission to weather services.
+A SignalK plugin that collects marine weather data and generates BBXX weather reports for submission to NOAA which will then propgate to other weather services such as Windy.
 
 ## Features
 
