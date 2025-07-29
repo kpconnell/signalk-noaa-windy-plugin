@@ -250,13 +250,13 @@ async function collectSignalkData(app, samples = 3, interval = 5, stationId = 'U
         const availableData = Object.entries(dataStatus)
             .filter(([key, available]) => available)
             .map(([key]) => key);
-        const missingData = Object.entries(dataStatus)
+        const missingDataSummary = Object.entries(dataStatus)
             .filter(([key, available]) => !available)
             .map(([key]) => key);
             
         console.log(`Available data: ${availableData.join(', ')}`);
-        if (missingData.length > 0) {
-            console.log(`Missing data: ${missingData.join(', ')}`);
+        if (missingDataSummary.length > 0) {
+            console.log(`Missing data: ${missingDataSummary.join(', ')}`);
         }
         
         console.log(`Averaging ${collectedSamples.length} samples...`);
