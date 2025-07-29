@@ -1,6 +1,6 @@
 {
   "name": "signalk-noaa-weather-report",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Sends Voluntary Ship Observations to NOAA (and Windy)  Requires an official ships radio callsign",
   "main": "src/index.js",
   "scripts": {
