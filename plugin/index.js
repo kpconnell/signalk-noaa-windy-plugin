@@ -105,9 +105,10 @@ module.exports = function(app) {
             }
             
             if (lastReport) {
-                const timestamp = lastReport.utc_time.toISOString().slice(0, 19).replace('T', ' ');
-                const tws = lastReport.true_wind_speed ? `${lastReport.true_wind_speed.toFixed(1)} knots` : 'N/A';
-                return `Last report: ${timestamp}, TWS: ${tws}`;
+                const timestamp = lastReport.utc_time.toISOString().slice(11, 19); // Just HH:MM:SS
+                const tws = lastReport.true_wind_speed ? `${lastReport.true_wind_speed.toFixed(1)}` : 'N/A';
+                const twd = lastReport.true_wind_dir ? `${lastReport.true_wind_dir.toFixed(0)}°` : 'N/A';
+                return `${timestamp} ${tws}kts ${twd}`;
             }
             
             return 'No reports sent yet';
