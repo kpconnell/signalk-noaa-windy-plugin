@@ -184,6 +184,7 @@ module.exports = function(app) {
             logger.info(`Test Mode: ${options.testMode ? 'ON (reports logged only)' : 'OFF (reports sent to NOAA)'}`);
 
             pluginStarted = true;
+            app.setPluginStatus('Plugin started - waiting for data...');
 
             // Handle automatic reporting if interval is set
             if (options.reportInterval && options.reportInterval > 0) {
@@ -201,11 +202,13 @@ module.exports = function(app) {
                             // Clear any previous errors on success
                             lastError = null;
                             lastErrorTime = null;
+                            app.setPluginStatus('Initial weather report sent successfully');
                         } catch (error) {
                             const errorMsg = `Failed to send initial weather report: ${error.message}`;
                             logger.error(errorMsg);
                             lastError = errorMsg;
                             lastErrorTime = Date.now();
+                            app.setPluginError(errorMsg);
                         }
                     } else {
                         logger.warn('Plugin is no longer running - skipping initial report');
@@ -223,11 +226,13 @@ module.exports = function(app) {
                             // Clear any previous errors on success
                             lastError = null;
                             lastErrorTime = null;
+                            app.setPluginStatus('Scheduled weather report sent successfully');
                         } catch (error) {
                             const errorMsg = `Failed to send scheduled weather report: ${error.message}`;
                             logger.error(errorMsg);
                             lastError = errorMsg;
                             lastErrorTime = Date.now();
+                            app.setPluginError(errorMsg);
                         }
                     }
                 }, intervalMs);
@@ -303,6 +308,7 @@ module.exports = function(app) {
 
                 try {
                     const result = await generateReport();
+                    app.setPluginStatus('Manual weather report generated successfully');
                     res.json({
                         success: true,
                         report: {
@@ -320,7 +326,9 @@ module.exports = function(app) {
                         }
                     });
                 } catch (error) {
-                    logger.error(`Error generating manual report: ${error.message}`);
+                    const errorMsg = `Error generating manual report: ${error.message}`;
+                    logger.error(errorMsg);
+                    app.setPluginError(errorMsg);
                     res.status(500).json({ error: error.message });
                 }
             });
