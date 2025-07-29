@@ -118,11 +118,32 @@ module.exports = function(app) {
                 const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
                 if (lastErrorTime > fiveMinutesAgo) {
                     const errorTime = new Date(lastErrorTime).toISOString().slice(11, 19);
-                    return `${errorTime} Error: ${lastError}`;
+                    // Use "ERROR" prefix to trigger red status in SignalK dashboard
+                    return `ERROR: ${lastError}`;
                 }
             }
             
             return 'Waiting for data...';
+        },
+
+        // Add status property for SignalK dashboard color indication
+        get status() {
+            if (!pluginStarted) {
+                return 'stopped';
+            }
+            
+            if (lastError && lastErrorTime) {
+                const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+                if (lastErrorTime > fiveMinutesAgo) {
+                    return 'error';
+                }
+            }
+            
+            if (lastReport) {
+                return 'active';
+            }
+            
+            return 'waiting';
         },
 
         start: function(options) {
