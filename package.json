@@ -7,6 +7,8 @@
     "build": "echo 'No build step needed - using src directly'",
     "dev": "npm link",
     "test": "node test.js",
+    "test:plugin": "node test-plugin.js",
+    "prepublishOnly": "npm run test:plugin",
     "deploy": "./deploy_to_pi.sh",
     "release:patch": "npm version patch && git push && git push --tags && npm publish",
     "release:minor": "npm version minor && git push && git push --tags && npm publish",

@@ -9,6 +9,8 @@ module.exports = function(app) {
     let intervalId = null;
     let lastReport = null;
     let pluginStarted = false;
+    let lastError = null;
+    let lastErrorTime = null;
 
     const plugin = {
         id: 'signalk-noaa-weather-report',
@@ -111,7 +113,16 @@ module.exports = function(app) {
                 return `${timestamp} ${tws}kts ${twd}`;
             }
             
-            return 'No reports sent yet';
+            // Show recent error if within last 5 minutes
+            if (lastError && lastErrorTime) {
+                const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+                if (lastErrorTime > fiveMinutesAgo) {
+                    const errorTime = new Date(lastErrorTime).toISOString().slice(11, 19);
+                    return `${errorTime} Error: ${lastError}`;
+                }
+            }
+            
+            return 'Waiting for data...';
         },
 
         start: function(options) {
@@ -166,8 +177,14 @@ module.exports = function(app) {
                         try {
                             await generateReport(options);
                             logger.info('Initial weather report sent successfully');
+                            // Clear any previous errors on success
+                            lastError = null;
+                            lastErrorTime = null;
                         } catch (error) {
-                            logger.error(`Failed to send initial weather report: ${error.message}`);
+                            const errorMsg = `Failed to send initial weather report: ${error.message}`;
+                            logger.error(errorMsg);
+                            lastError = errorMsg;
+                            lastErrorTime = Date.now();
                         }
                     } else {
                         logger.warn('Plugin is no longer running - skipping initial report');
@@ -182,8 +199,14 @@ module.exports = function(app) {
                         try {
                             await generateReport(options);
                             logger.info('Scheduled weather report sent successfully');
+                            // Clear any previous errors on success
+                            lastError = null;
+                            lastErrorTime = null;
                         } catch (error) {
-                            logger.error(`Failed to send scheduled weather report: ${error.message}`);
+                            const errorMsg = `Failed to send scheduled weather report: ${error.message}`;
+                            logger.error(errorMsg);
+                            lastError = errorMsg;
+                            lastErrorTime = Date.now();
                         }
                     }
                 }, intervalMs);
@@ -286,74 +309,69 @@ module.exports = function(app) {
     async function generateReport(options = {}) {
         if (!logger) {
             console.error('Logger not initialized');
-            return null;
+            throw new Error('Logger not initialized');
         }
 
-        try {
-            logger.info('Generating weather report...');
-            
-            // Use configuration options with fallback defaults
-            const samples = options.samples || 3;
-            const interval = options.interval || 5;
-            const stationId = options.stationId;
-            const betaKey = options.betaKey;
-            const logLevel = options.logLevel || 'info';
-            
-            // Hardcoded beta key for production access
-            const VALID_BETA_KEY = 'NOAA-WINDY-BETA-2025-WXR7K9';
-            
-            // Validate beta key and determine test mode
-            const validBetaKey = betaKey === VALID_BETA_KEY;
-            const testMode = !validBetaKey || options.testMode !== false;
-            
-            if (!betaKey) {
-                logger.warn('Beta key not provided - forcing test mode (reports will not be sent to NOAA)');
-            } else if (!validBetaKey) {
-                logger.warn('Invalid beta key provided - forcing test mode (reports will not be sent to NOAA)');
-            } else if (validBetaKey && !options.testMode) {
-                logger.info('Valid beta key provided - production mode enabled (reports will be sent to NOAA)');
-            }
-            
-            if (!stationId) {
-                const errorMsg = 'Station ID is required but not configured';
-                logger.error(errorMsg);
-                throw new Error(errorMsg);
-            }
-
-            // Collect data
-            const data = await collectSignalkData(app, samples, interval, stationId);
-            
-            if (!data) {
-                const errorMsg = 'Failed to collect weather data';
-                logger.error(errorMsg);
-                throw new Error(errorMsg);
-            }
-
-            // Add human readable format
-            data.humanReadable = humanReadableReport(
-                data.lat,
-                data.lon,
-                data.true_wind_dir,
-                data.true_wind_speed,
-                data.utc_time
-            );
-
-            // Log the summary
-            displaySignalkSummary(data);
-            logger.info(`Generated BBXX report: ${data.bbxx}`);
-
-            // Send to NOAA (always attempt, testMode controls actual sending)
-            await sendSignalkData(data, testMode, stationId);
-            logger.info(testMode ? 'Report logged (test mode - not sent to NOAA)' : 'Report sent to NOAA');
-
-            // Store last report
-            lastReport = data;
-
-            return data;
-        } catch (error) {
-            logger.error(`Error generating report: ${error.message}`);
-            return null;
+        logger.info('Generating weather report...');
+        
+        // Use configuration options with fallback defaults
+        const samples = options.samples || 3;
+        const interval = options.interval || 5;
+        const stationId = options.stationId;
+        const betaKey = options.betaKey;
+        const logLevel = options.logLevel || 'info';
+        
+        // Hardcoded beta key for production access
+        const VALID_BETA_KEY = 'NOAA-WINDY-BETA-2025-WXR7K9';
+        
+        // Validate beta key and determine test mode
+        const validBetaKey = betaKey === VALID_BETA_KEY;
+        const testMode = !validBetaKey || options.testMode !== false;
+        
+        if (!betaKey) {
+            logger.warn('Beta key not provided - forcing test mode (reports will not be sent to NOAA)');
+        } else if (!validBetaKey) {
+            logger.warn('Invalid beta key provided - forcing test mode (reports will not be sent to NOAA)');
+        } else if (validBetaKey && !options.testMode) {
+            logger.info('Valid beta key provided - production mode enabled (reports will be sent to NOAA)');
         }
+        
+        if (!stationId) {
+            const errorMsg = 'Station ID is required but not configured';
+            logger.error(errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        // Collect data
+        const data = await collectSignalkData(app, samples, interval, stationId);
+        
+        if (!data) {
+            const errorMsg = 'Failed to collect weather data';
+            logger.error(errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        // Add human readable format
+        data.humanReadable = humanReadableReport(
+            data.lat,
+            data.lon,
+            data.true_wind_dir,
+            data.true_wind_speed,
+            data.utc_time
+        );
+
+        // Log the summary
+        displaySignalkSummary(data);
+        logger.info(`Generated BBXX report: ${data.bbxx}`);
+
+        // Send to NOAA (always attempt, testMode controls actual sending)
+        await sendSignalkData(data, testMode, stationId);
+        logger.info(testMode ? 'Report logged (test mode - not sent to NOAA)' : 'Report sent to NOAA');
+
+        // Store last report
+        lastReport = data;
+
+        return data;
     }
 
     return plugin;
