@@ -261,7 +261,7 @@ module.exports = function(app) {
                     const result = await generateReport();
                     res.json({
                         success: true,
-                        report: result ? {
+                        report: {
                             timestamp: result.utc_time,
                             position: {
                                 lat: result.lat,
@@ -273,7 +273,7 @@ module.exports = function(app) {
                             },
                             bbxx: result.bbxx,
                             humanReadable: result.humanReadable
-                        } : null
+                        }
                     });
                 } catch (error) {
                     logger.error(`Error generating manual report: ${error.message}`);
@@ -315,16 +315,18 @@ module.exports = function(app) {
             }
             
             if (!stationId) {
-                logger.error('Station ID is required but not configured');
-                return null;
+                const errorMsg = 'Station ID is required but not configured';
+                logger.error(errorMsg);
+                throw new Error(errorMsg);
             }
 
             // Collect data
             const data = await collectSignalkData(app, samples, interval, stationId);
             
             if (!data) {
-                logger.error('Failed to collect weather data');
-                return null;
+                const errorMsg = 'Failed to collect weather data';
+                logger.error(errorMsg);
+                throw new Error(errorMsg);
             }
 
             // Add human readable format

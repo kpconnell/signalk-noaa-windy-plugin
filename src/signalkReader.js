@@ -137,6 +137,15 @@ async function collectSample(app) {
     } else {
         sample.true_wind_dir = null;
         sample.true_wind_speed = null;
+        
+        // Log what's missing for true wind calculation
+        const missingForWind = [];
+        if (sample.awa === null) missingForWind.push('apparent wind angle');
+        if (sample.aws === null) missingForWind.push('apparent wind speed');
+        if (sample.true_heading_deg === null) missingForWind.push('heading');
+        if (sample.sog_knots === null) missingForWind.push('speed over ground');
+        
+        console.debug(`Sample missing data for true wind calculation: ${missingForWind.join(', ')}`);
     }
     
     return sample;
@@ -203,7 +212,7 @@ async function collectSignalkData(app, samples = 3, interval = 5, stationId = 'U
             const sample = await collectSample(app);
             
             if (sample === null) {
-                console.warn("Failed to collect sample, skipping...");
+                console.warn(`Sample ${i + 1} failed to collect - skipping...`);
                 continue;
             }
             
@@ -227,6 +236,29 @@ async function collectSignalkData(app, samples = 3, interval = 5, stationId = 'U
             return null;
         }
         
+        // Log data availability summary
+        console.log(`\nData collection summary: ${collectedSamples.length}/${samples} samples collected`);
+        const firstSample = collectedSamples[0];
+        const dataStatus = {
+            position: !!(firstSample.lat !== null && firstSample.lon !== null),
+            heading: !!(firstSample.true_heading_deg !== null),
+            wind: !!(firstSample.true_wind_dir !== null && firstSample.true_wind_speed !== null),
+            speed: !!(firstSample.sog_knots !== null),
+            waterTemp: !!(firstSample.water_temp !== null)
+        };
+        
+        const availableData = Object.entries(dataStatus)
+            .filter(([key, available]) => available)
+            .map(([key]) => key);
+        const missingData = Object.entries(dataStatus)
+            .filter(([key, available]) => !available)
+            .map(([key]) => key);
+            
+        console.log(`Available data: ${availableData.join(', ')}`);
+        if (missingData.length > 0) {
+            console.log(`Missing data: ${missingData.join(', ')}`);
+        }
+        
         console.log(`Averaging ${collectedSamples.length} samples...`);
         const avgData = averageSamples(collectedSamples);
         
@@ -238,23 +270,29 @@ async function collectSignalkData(app, samples = 3, interval = 5, stationId = 'U
         // Add timestamp and BBXX report
         avgData.utc_time = new Date();
         
-        // Generate BBXX report
-        if (avgData.true_wind_dir !== null && avgData.true_wind_speed !== null && 
-            avgData.lat !== null && avgData.lon !== null) {
-            const bbxx = generateBbxxReport(
-                avgData.true_wind_dir,
-                avgData.true_wind_speed,
-                avgData.lat,
-                avgData.lon,
-                avgData.utc_time,
-                stationId,
-                avgData.water_temp
-            );
-            avgData.bbxx = bbxx;
-        } else {
-            console.error("Missing required data for BBXX report generation");
+        // Check data completeness and provide detailed error messages
+        const missingData = [];
+        if (avgData.lat === null || avgData.lon === null) missingData.push('position (lat/lon)');
+        if (avgData.true_heading_deg === null) missingData.push('heading');
+        if (avgData.true_wind_dir === null || avgData.true_wind_speed === null) missingData.push('wind (direction/speed)');
+        if (avgData.sog_knots === null) missingData.push('speed over ground');
+        
+        if (missingData.length > 0) {
+            console.error(`Missing required data for BBXX report generation: ${missingData.join(', ')}`);
             return null;
         }
+        
+        // Generate BBXX report
+        const bbxx = generateBbxxReport(
+            avgData.true_wind_dir,
+            avgData.true_wind_speed,
+            avgData.lat,
+            avgData.lon,
+            avgData.utc_time,
+            stationId,
+            avgData.water_temp
+        );
+        avgData.bbxx = bbxx;
         
         return avgData;
     } catch (error) {

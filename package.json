@@ -2,10 +2,10 @@
   "name": "signalk-noaa-weather-report",
   "version": "1.0.13",
   "description": "Sends Voluntary Ship Observations to NOAA (and Windy)  Requires an official ships radio callsign",
-  "main": "plugin/index.js",
+  "main": "src/index.js",
   "scripts": {
-    "build": "cp -r src/* plugin/",
-    "dev": "npm run build && npm link",
+    "build": "echo 'No build step needed - using src directly'",
+    "dev": "npm link",
     "test": "node test.js",
     "deploy": "./deploy_to_pi.sh",
     "release:patch": "npm version patch && git push && git push --tags && npm publish",
